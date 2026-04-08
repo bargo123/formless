@@ -2,7 +2,7 @@ name: formless
 description: >-
   A Flutter package that turns any list of fields into an AI-powered
   conversational form. Validates answers via Groq, OpenAI, Gemini, or DeepSeek
-  and returns a clean key→value map when all fields are collected.
+  and returns a clean key->value map when all fields are collected.
 version: 0.1.1
 homepage: https://github.com/bargo123/formless
 repository: https://github.com/bargo123/formless

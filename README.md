@@ -15,6 +15,21 @@ Instead of a traditional form, Formless walks the user through each question one
 - Fully themeable — bubble colors, input field, send button, and more
 - Automatic JSON retry and rate-limit backoff
 
+## Free to use
+
+Formless works with providers that offer a **free tier** — you don't need a paid plan to get started:
+
+| Provider | Free tier |
+|---|---|
+| **Groq** | Yes — generous free tier, very fast |
+| **Gemini** | Yes — free tier available |
+| **OpenAI** | No — pay per use |
+| **DeepSeek** | No — pay per use |
+
+## Privacy & security
+
+User data is sent **directly from the device to the AI provider** — it never passes through any third-party server, including Formless itself. The package makes HTTP calls straight to the provider's API using the key you supply, so your users' answers stay between them and the provider you choose.
+
 ## Installation
 
 Add to your `pubspec.yaml`:
