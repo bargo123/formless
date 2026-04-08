@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1
+
+* Added `backgroundColor` parameter to `Formless` for background color control.
+* Added `unexpectedErrorMessage` parameter to customize the error banner text.
+* API and network errors now show a dismissible banner instead of a chat bubble.
+* User's message is automatically restored in the input field after an API error.
+* Added demo GIF to README.
+
 ## 0.1.0
 
 * Initial release.
