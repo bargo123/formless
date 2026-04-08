@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+* Updated demo GIF.
+
 ## 0.1.1
 
 * Added `backgroundColor` parameter to `Formless` for background color control.
