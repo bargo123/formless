@@ -2,7 +2,7 @@
 
 A Flutter package that turns any list of fields into an AI-powered conversational form.
 
-![Formless demo](https://raw.githubusercontent.com/bargo123/formless/main/assets/images/formless_example.gif)
+<img src="https://raw.githubusercontent.com/bargo123/formless/main/assets/images/formless_example.gif" width="320"/>
 
 Instead of a traditional form, Formless walks the user through each question one at a time in a chat UI. The LLM validates answers in natural language, asks for corrections when needed, and returns a clean `key → value` map when all fields are collected.
 
