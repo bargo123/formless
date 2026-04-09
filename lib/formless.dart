@@ -18,6 +18,8 @@ import 'package:formless/widgets/chat_layout.dart';
 /// that walks the user through each question one at a time, validates answers
 /// using the chosen AI provider, and calls [onComplete] with a clean
 /// `key -> value` map once every field has been collected.
+/// For server-side or app-specific checks (e.g. nickname already taken), set
+/// [QuestionsModel.onValidate] on individual questions.
 ///
 /// ```dart
 /// Formless(
@@ -36,6 +38,7 @@ class Formless extends StatefulWidget {
   /// Renders a chat-style UI that walks the user through each [questions] one
   /// at a time, validates answers via the chosen AI [provider], and calls
   /// [onComplete] with a clean `key -> value` map once every field is collected.
+  /// Use [QuestionsModel.onValidate] for app-specific checks after the AI accepts.
   ///
   /// ```dart
   /// Formless(

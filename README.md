@@ -10,7 +10,7 @@ Instead of a traditional form, Formless walks the user through each question one
 
 - Chat-style UI — no traditional form widgets needed
 - Supports **Groq**, **OpenAI**, **Gemini**, and **DeepSeek**
-- Per-field validation with optional custom rules
+- Per-field validation with optional custom rules for the LLM, plus optional **`onValidate`** for your own API checks after the AI accepts an answer
 - Users can edit any previous answer by long-pressing their bubble
 - Fully themeable — bubble colors, input field, send button, and more
 - Automatic JSON retry and rate-limit backoff
@@ -36,7 +36,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  formless: ^0.1.0
+  formless: ^0.1.3
 ```
 
 Then run:
@@ -109,6 +109,29 @@ Formless(
 )
 ```
 
+### Post-AI validation (`onValidate`)
+
+The LLM first decides whether the answer fits the question and any `validationMessage` / field type. After it accepts, you can run **your own** validation on the user’s text — for example calling your API to check that a nickname is not already taken.
+
+`onValidate` is optional on each `QuestionsModel`. It runs only when the AI has already accepted the answer. Return `null` to keep the answer, or a non-empty `String` to reject it; that string is shown to the user so they can try again.
+
+```dart
+QuestionsModel(
+  question: 'What nickname would you like?',
+  key: 'nickname',
+  type: QuestionFieldType.text,
+  onValidate: (answer) async {
+    final taken = await myBackend.isNicknameTaken(answer);
+    if (taken) {
+      return 'That nickname is already taken — please choose another.';
+    }
+    return null;
+  },
+),
+```
+
+Use this for uniqueness checks, database rules, or any logic you control on the device or via your own services — anything the model cannot reliably verify on its own.
+
 ### Custom theme
 
 ```dart
@@ -166,6 +189,7 @@ Formless(
 | `key` | `String` | Yes | Key used in the `onComplete` data map |
 | `type` | `QuestionFieldType?` | No | Drives validation rules (email, phone, numeric, etc.) |
 | `validationMessage` | `String?` | No | Custom rule the LLM must strictly follow |
+| `onValidate` | `Future<String?> Function(String)?` | No | After the AI accepts, run custom checks (e.g. API); return `null` or an error message for the user |
 
 ### `FormlessTheme`
 
@@ -185,5 +209,3 @@ Formless(
 ## License
 
 MIT
-# formless
-# formless

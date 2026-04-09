@@ -44,6 +44,7 @@ class FormlessDemoPage extends StatelessWidget {
               provider: AiProvider.groq,
               apiKey: _apiKey,
               questions: [
+
                 QuestionsModel(
                   question: 'What is your full name?',
                   key: 'name',
@@ -53,12 +54,10 @@ class FormlessDemoPage extends StatelessWidget {
                   question: 'What is your email address?',
                   key: 'email',
                   type: QuestionFieldType.email,
-                ),
-                QuestionsModel(
-                  question: 'What is your phone number?',
-                  key: 'phone',
-                  type: QuestionFieldType.phone,
-                  validationMessage: 'Must include country code',
+                  onValidate: (answer) async {
+                    await Future.delayed(const Duration(seconds: 2));
+                    return null;
+                  },
                 ),
               ],
       

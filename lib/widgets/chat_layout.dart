@@ -44,8 +44,7 @@ class ChatLayout extends StatefulWidget {
     required this.apiKey,
     this.model,
     this.questions = kDefaultFormlessQuestions,
-    this.unexpetecErrorMessage = "Something went wrong, please try again.",
-
+    this.unexpectedErrorMessage = 'Something went wrong, please try again.',
   });
 
   final Widget? sendIcon;
@@ -56,7 +55,7 @@ class ChatLayout extends StatefulWidget {
   final AiProvider provider;
   final String apiKey;
   final String? model;
-  final String? unexpetecErrorMessage;
+  final String? unexpectedErrorMessage;
 
   @override
   State<ChatLayout> createState() => _ChatLayoutState();
@@ -70,11 +69,13 @@ class _ChatLayoutState extends State<ChatLayout> {
   final ScrollController _scrollController = ScrollController();
   bool _isWaiting = false;
   String? _errorMessage;
+  int _currentQuestionIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // show first question as opening message
+    assert(widget.questions.isNotEmpty, 'Formless: questions list must not be empty.');
+    if (widget.questions.isEmpty) return;
     final firstQuestion = widget.questions[0].question;
     _messages.add(
       QuestionsModel(
@@ -155,31 +156,52 @@ class _ChatLayoutState extends State<ChatLayout> {
           });
         }
 
-      } else if (reply['done'] == true) {
-        // all fields collected — fire onComplete
-        _history.add({'role': 'user', 'content': userText});
-        setState(() => _isWaiting = false);
-        final data = reply['data'];
-        final raw = data is Map<String, dynamic>
-            ? data
-            : (data is Map ? Map<String, dynamic>.from(data) : <String, dynamic>{});
-        // keep only the keys we actually asked for, using the question key as canonical
-        final expectedKeys = widget.questions.map((q) => q.key).toSet();
-        final payload = {
-          for (final entry in raw.entries)
-            if (expectedKeys.contains(entry.key)) entry.key: entry.value,
-        };
-        widget.onComplete?.call(payload);
+      } else if (reply['done'] == true || reply['result'] == true) {
+        // run optional post-AI validation before accepting the answer
+        final currentQuestion = widget.questions[_currentQuestionIndex];
+        final customError = await currentQuestion.onValidate?.call(userText);
 
-      } else {
-        // valid — show next question
-        final nextQuestion = reply['nextQuestion'] ?? '';
-        _history.add({'role': 'user', 'content': userText});
-        _history.add({'role': 'assistant', 'content': nextQuestion});
-        setState(() {
-          _messages.add(QuestionsModel(question: nextQuestion, key: ''));
-          _isWaiting = false;
-        });
+        if (!mounted) return;
+
+        if (customError != null) {
+          // custom validator rejected — tell the AI validation failed and re-ask
+          // the same question so it stays on this field next round
+          _history.add({'role': 'user', 'content': userText});
+          _history.add({
+            'role': 'assistant',
+            'content': '$customError ${currentQuestion.question}',
+          });
+          // show only the friendly error to the user, not the re-asked question
+          setState(() {
+            _messages.add(QuestionsModel(question: customError, key: ''));
+            _isWaiting = false;
+          });
+        } else if (reply['done'] == true) {
+          // all fields collected — fire onComplete
+          _currentQuestionIndex = 0;
+          _history.add({'role': 'user', 'content': userText});
+          setState(() => _isWaiting = false);
+          final data = reply['data'];
+          final raw = data is Map<String, dynamic>
+              ? data
+              : (data is Map ? Map<String, dynamic>.from(data) : <String, dynamic>{});
+          final expectedKeys = widget.questions.map((q) => q.key).toSet();
+          final payload = {
+            for (final entry in raw.entries)
+              if (expectedKeys.contains(entry.key)) entry.key: entry.value,
+          };
+          widget.onComplete?.call(payload);
+        } else {
+          // valid — show next question
+          _currentQuestionIndex++;
+          final nextQuestion = reply['nextQuestion'] ?? '';
+          _history.add({'role': 'user', 'content': userText});
+          _history.add({'role': 'assistant', 'content': nextQuestion});
+          setState(() {
+            _messages.add(QuestionsModel(question: nextQuestion, key: ''));
+            _isWaiting = false;
+          });
+        }
       }
 
       _scrollToBottom();
@@ -213,6 +235,7 @@ class _ChatLayoutState extends State<ChatLayout> {
       _messages.removeRange(messageIndex, _messages.length);
       _history.removeRange(_historyCheckpoints[answerIndex], _history.length);
       _historyCheckpoints.removeRange(answerIndex, _historyCheckpoints.length);
+      _currentQuestionIndex = answerIndex;
     });
   }
 
@@ -254,7 +277,7 @@ class _ChatLayoutState extends State<ChatLayout> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      widget.unexpetecErrorMessage!,
+                      widget.unexpectedErrorMessage!,
                       style: TextStyle(color: Colors.red.shade700, fontSize: 13),
                     ),
                   ),

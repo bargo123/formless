@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+* Added optional `onError` callback on `Formless` / `ChatLayout` so host apps can log or surface validation and API failures.
+* Documented `QuestionsModel.onValidate` (post-AI checks such as nickname availability) in README, API table, and dartdocs.
+* Exclude local `build/` from the published tarball via `.pubignore`.
+* Version bump for pub.dev publication.
+
 ## 0.1.2
 
 * Updated demo GIF.
