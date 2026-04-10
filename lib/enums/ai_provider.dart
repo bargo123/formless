@@ -1,7 +1,7 @@
 /// Which LLM HTTP API the package should use to validate answers.
 ///
-/// Pass one of these values to [Formless.provider].
-/// Each provider uses its own default model which can be overridden via [Formless.model].
+/// Pass one of these values to the `Formless` constructor's `provider` argument.
+/// Each provider uses its own default model; override with the `model` argument.
 enum AiProvider {
   /// Groq inference API. Default model: `meta-llama/llama-4-scout-17b-16e-instruct`.
   /// Fast and free-tier friendly. Get a key at https://console.groq.com.

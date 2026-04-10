@@ -19,7 +19,7 @@ const List<QuestionsModel> kDefaultFormlessQuestions = [
     question: 'What is your age?',
     key: 'age',
     type: QuestionFieldType.numeric,
-    validationMessage: "age should be between 18 and 100"
+    validationMessage: 'age should be between 18 and 100',
   ),
   QuestionsModel(
     question: 'What is your email?',
@@ -29,7 +29,7 @@ const List<QuestionsModel> kDefaultFormlessQuestions = [
   QuestionsModel(
     question: 'What is your phone number?',
     key: 'phone',
-    validationMessage: "Must include country code"
+    validationMessage: 'Must include country code',
   ),
 ];
 
@@ -68,6 +68,7 @@ class _ChatLayoutState extends State<ChatLayout> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isWaiting = false;
+  bool _isComplete = false;
   String? _errorMessage;
   int _currentQuestionIndex = 0;
 
@@ -107,6 +108,7 @@ class _ChatLayoutState extends State<ChatLayout> {
   }
 
   Future<void> _onSend() async {
+    if (_isComplete) return;
     final userText = _controller.text.trim();
     if (userText.isEmpty || _isWaiting) return;
 
@@ -180,7 +182,11 @@ class _ChatLayoutState extends State<ChatLayout> {
           // all fields collected — fire onComplete
           _currentQuestionIndex = 0;
           _history.add({'role': 'user', 'content': userText});
-          setState(() => _isWaiting = false);
+          setState(() {
+            _isWaiting = false;
+            _isComplete = true;
+          });
+          _controller.clear();
           final data = reply['data'];
           final raw = data is Map<String, dynamic>
               ? data
@@ -221,6 +227,7 @@ class _ChatLayoutState extends State<ChatLayout> {
   }
 
   void _onEditMessage(int messageIndex) {
+    if (_isComplete) return;
     final item = _messages[messageIndex];
     if (item is! AnswersModel || _isWaiting) return;
 
@@ -256,7 +263,7 @@ class _ChatLayoutState extends State<ChatLayout> {
             scrollController: _scrollController,
             isWaiting: _isWaiting,
             theme: widget.theme,
-            onEditMessage: _onEditMessage,
+            onEditMessage: _isComplete ? null : _onEditMessage,
           ),
         ),
         if (_errorMessage != null)
@@ -294,6 +301,7 @@ class _ChatLayoutState extends State<ChatLayout> {
           controller: _controller,
           onSend: _onSend,
           isWaiting: _isWaiting,
+          enabled: !_isComplete,
           theme: widget.theme,
           sendIcon: widget.sendIcon,
         ),

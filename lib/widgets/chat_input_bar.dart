@@ -7,6 +7,7 @@ class ChatInputBar extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.isWaiting,
+    this.enabled = true,
     this.theme,
     this.sendIcon,
   });
@@ -14,6 +15,8 @@ class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isWaiting;
+  /// When false (e.g. form finished), the field and send control are inactive.
+  final bool enabled;
   final FormlessTheme? theme;
   final Widget? sendIcon;
 
@@ -24,7 +27,10 @@ class ChatInputBar extends StatelessWidget {
         Expanded(
           child: TextField(
             controller: controller,
-            onSubmitted: (_) => onSend(),
+            enabled: enabled,
+            onSubmitted: (_) {
+              if (enabled && !isWaiting) onSend();
+            },
             style: theme?.inputTextStyle,
             decoration: theme?.inputDecoration ??
                 InputDecoration(
@@ -41,14 +47,16 @@ class ChatInputBar extends StatelessWidget {
                         ? BorderSide(color: theme!.inputBorderColor!)
                         : const BorderSide(color: Color(0xff612A74)),
                   ),
-                  hintText: theme?.inputHintText ?? 'Answer the question',
+                  hintText: enabled
+                      ? (theme?.inputHintText ?? 'Answer the question')
+                      : 'Form complete',
                 ),
           ),
         ),
         const SizedBox(width: 16),
         InkWell(
           borderRadius: BorderRadius.circular(30),
-          onTap: isWaiting ? null : onSend,
+          onTap: (enabled && !isWaiting) ? onSend : null,
           child: CircleAvatar(
             backgroundColor: theme?.sendButtonColor ?? const Color(0xff612A74),
             radius: 30,

@@ -37,7 +37,7 @@ class MessageBubble extends StatelessWidget {
       ),
     );
 
-    if (!isUser || onEdit == null) {
+    if (!isUser) {
       return Align(
         alignment: Alignment.centerLeft,
         child: Padding(
@@ -47,31 +47,34 @@ class MessageBubble extends StatelessWidget {
       );
     }
 
+    // User messages stay right-aligned even when editing is disabled (e.g. form complete).
     return Align(
       alignment: Alignment.centerRight,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
             bubble,
-            GestureDetector(
-              onTap: onEdit,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4, right: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.edit, size: 12, color: Colors.grey.shade500),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Edit',
-                      style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-                    ),
-                  ],
+            if (onEdit != null)
+              GestureDetector(
+                onTap: onEdit,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4, right: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.edit, size: 12, color: Colors.grey.shade500),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Edit',
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

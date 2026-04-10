@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Controls the visual appearance of the [Formless] widget.
+/// Controls the visual appearance of the root `Formless` chat widget.
 ///
 /// All properties are optional — any value left null falls back to the
 /// built-in default. Only override what you need.

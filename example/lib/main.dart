@@ -3,7 +3,7 @@ import 'package:formless/formless.dart';
 
 /// Pass your API key at run time, e.g.:
 /// `flutter run --dart-define=FORMLESS_API_KEY=your_key_here`
-const String _apiKey = String.fromEnvironment('FORMLESS_API_KEY',defaultValue: "");
+const String _apiKey = String.fromEnvironment('FORMLESS_API_KEY');
 
 void main() {
   runApp(const FormlessExampleApp());

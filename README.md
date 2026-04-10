@@ -36,7 +36,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  formless: ^0.1.3
+  formless: ^0.1.5
 ```
 
 Then run:

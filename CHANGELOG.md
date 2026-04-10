@@ -1,7 +1,17 @@
 # Changelog
 
+## 0.1.5
+
+* Chat UX after completion: input stays disabled and user bubbles remain right-aligned (no layout shift).
+
+## 0.1.4
+
+* Resolved static analysis issues (`comment_references`, `prefer_single_quotes`) so pub.dev can complete package analysis successfully.
+
 ## 0.1.3
 
+* After all questions are answered, the chat input and send button are disabled so users cannot send more messages (editing previous answers is also disabled).
+* Keep user message bubbles right-aligned when the form is complete (they no longer jump to the left).
 * Added optional `onError` callback on `Formless` / `ChatLayout` so host apps can log or surface validation and API failures.
 * Documented `QuestionsModel.onValidate` (post-AI checks such as nickname availability) in README, API table, and dartdocs.
 * Exclude local `build/` from the published tarball via `.pubignore`.
